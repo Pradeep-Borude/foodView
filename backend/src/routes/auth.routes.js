@@ -3,9 +3,15 @@ const authController = require("../controllers/auth.controller")
 
 const router = express.Router();
 
+// user APIs
+router.post('/user/register',authController.registerUser)
+router.post('/user/login',authController.loginUser)
+router.get('/user/logout',authController.logoutUser)
 
-router.post('/register',authController.registerUser)
-router.post('/login',authController.loginUser)
+// food-partner APIs
+router.post('/food-partner/register', authController.registeredFoodPartner);
+router.post('/food-partner/login', authController.loginFoodPartner);
+router.get('/food-partner/logout', authController.logoutFoodPartner);
 
 
 module.exports = router;
