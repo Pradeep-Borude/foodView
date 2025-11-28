@@ -12,7 +12,16 @@ const foodPartnerSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
+     contact:{
+        type:Number,
+        required:true,
+        unique:true
+    },
     password:{
+        type:String,
+        required:true
+    },
+     address:{
         type:String,
         required:true
     }
