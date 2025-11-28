@@ -16,4 +16,11 @@ router.post('/',authMiddleware.authFoodPartnerMiddleware,
     upload.single("file"),
     foodController.createFood)
 
+
+
+// GET /api/food/ *[public]
+router.get('/',
+    authMiddleware.authUserMiddleware,
+    foodController.getFoodItems)
+
 module.exports= router;
