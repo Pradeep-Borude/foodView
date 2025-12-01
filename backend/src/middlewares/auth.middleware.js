@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 
 async function authFoodPartnerMiddleware(req, res, next) {
-    const token = req.cookies.token;
+    const token = req.cookies.foodPartnerToken;
     
     if (!token) {
         return res.status(400).json({
@@ -14,6 +14,11 @@ async function authFoodPartnerMiddleware(req, res, next) {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const foodPartner = await foodPartnerModel.findById(decoded.id);
+        if (!foodPartner) {
+            return res.status(404).json({
+                message: "Food partner not found"
+            })
+        }
         req.foodPartner = foodPartner
         next()
 
@@ -27,7 +32,7 @@ async function authFoodPartnerMiddleware(req, res, next) {
 
 
 async function authUserMiddleware(req, res, next) {
-const token = req.cookies.token;
+const token = req.cookies.userToken;
 
 if (!token) {
     return res.status(400).json({
@@ -36,9 +41,14 @@ if (!token) {
 
 }
 
-try { 
+try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const user = await userModel.findById(decoded.id);
+    if (!user) {
+        return res.status(404).json({
+            message: "User not found"
+        })
+    }
     req.user = user
 
     next()
