@@ -20,7 +20,7 @@ router.post('/',authMiddleware.authFoodPartnerMiddleware,
 
 // GET /api/food/ *[public]
 router.get('/',
-    authMiddleware.authUserMiddleware,
+    // authMiddleware.authUserMiddleware,
     foodController.getFoodItems)
 
 module.exports= router;
