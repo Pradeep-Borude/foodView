@@ -1,96 +1,30 @@
-import '../../styles/home.css';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import "../../styles/home.css";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Home() {
   const navigate = useNavigate();
+  const [foodItems, setFoodItems] = useState([]); // useState for food items
 
-  // Sample products data
-  const products = [
-    {
-      id: 1,
-      name: 'Margherita Pizza',
-      description: 'Fresh mozzarella and basil',
-      price: '$12.99',
-      emoji: '🍕'
-    },
-    {
-      id: 2,
-      name: 'Burger Deluxe',
-      description: 'Beef patty with cheese',
-      price: '$10.99',
-      emoji: '🍔'
-    },
-    {
-      id: 3,
-      name: 'Caesar Salad',
-      description: 'Crispy greens & croutons',
-      price: '$8.99',
-      emoji: '🥗'
-    },
-    {
-      id: 4,
-      name: 'Biryani Rice',
-      description: 'Fragrant basmati rice',
-      price: '$11.99',
-      emoji: '🍚'
-    },
-    {
-      id: 5,
-      name: 'Grilled Fish',
-      description: 'Fresh catch of the day',
-      price: '$14.99',
-      emoji: '🐟'
-    },
-    {
-      id: 6,
-      name: 'Chicken Wings',
-      description: 'Crispy & spicy',
-      price: '$9.99',
-      emoji: '🍗'
-    },
-    {
-      id: 7,
-      name: 'Pasta Carbonara',
-      description: 'Creamy Italian pasta',
-      price: '$11.99',
-      emoji: '🍝'
-    },
-    {
-      id: 8,
-      name: 'Sushi Platter',
-      description: 'Assorted fresh sushi',
-      price: '$16.99',
-      emoji: '🍣'
-    },
-    {
-      id: 9,
-      name: 'Tacos Al Pastor',
-      description: 'Spiced pork & pineapple',
-      price: '$9.99',
-      emoji: '🌮'
-    },
-    {
-      id: 10,
-      name: 'Chocolate Cake',
-      description: 'Rich and decadent',
-      price: '$6.99',
-      emoji: '🍰'
-    },
-    {
-      id: 11,
-      name: 'Coffee Espresso',
-      description: 'Strong aromatic brew',
-      price: '$4.99',
-      emoji: '☕'
-    },
-    {
-      id: 12,
-      name: 'Smoothie Bowl',
-      description: 'Refreshing fruit blend',
-      price: '$7.99',
-      emoji: '🥣'
-    },
-  ];
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/food",
+        { withCredentials: true }
+      );
+      console.log("API response:", response.data.foodItems);
+
+      // Update state with fetched items (triggers re-render)
+      setFoodItems(response.data.foodItems);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleAddToCart = (product) => {
     alert(`${product.name} added to cart!`);
@@ -113,9 +47,11 @@ export default function Home() {
 
         {/* Products Grid */}
         <div className="products-grid">
-          {products.map((product) => (
-            <div key={product.id} className="product-card">
-              <div className="product-image">{product.emoji}</div>
+          {foodItems.map((product) => (
+            <div key={product._id} className="product-card">
+              <div className="product-image">
+                <img src={product.image} alt="" />
+              </div>
               <div className="product-info">
                 <h3 className="product-name">{product.name}</h3>
                 <p className="product-description">{product.description}</p>
@@ -136,35 +72,23 @@ export default function Home() {
 
       {/* Sticky Bottom Navbar */}
       <nav className="navbar-bottom">
-        <div
-          className="navbar-item active"
-          onClick={() => navigate('/')}
-        >
+        <div className="navbar-item active" onClick={() => navigate("/")}>
           <div className="navbar-icon">🏠</div>
           <div className="navbar-label">Home</div>
         </div>
 
-        <div
-          className="navbar-item"
-          onClick={() => navigate('/cart')}
-        >
+        <div className="navbar-item" onClick={() => navigate("/cart")}>
           <div className="navbar-icon">🛒</div>
           <div className="navbar-label">Cart</div>
           <div className="cart-badge">0</div>
         </div>
 
-        <div
-          className="navbar-item"
-          onClick={() => navigate('/orders')}
-        >
+        <div className="navbar-item" onClick={() => navigate("/orders")}>
           <div className="navbar-icon">📦</div>
           <div className="navbar-label">Orders</div>
         </div>
 
-        <div
-          className="navbar-item"
-          onClick={() => navigate('/user')}
-        >
+        <div className="navbar-item" onClick={() => navigate("/user")}>
           <div className="navbar-icon">👤</div>
           <div className="navbar-label">Account</div>
         </div>

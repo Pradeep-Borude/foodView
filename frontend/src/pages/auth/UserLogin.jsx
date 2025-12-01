@@ -23,7 +23,7 @@ const navigate = useNavigate();
       withCredentials: true
     });
     console.log('Login successful:', response.data);
-    navigate('/');
+    navigate('/user');
   };
   return (
     <div className="auth-container">

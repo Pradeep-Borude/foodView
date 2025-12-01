@@ -10,31 +10,79 @@ import Orders from "../pages/general/Orders";
 import UserProfile from "../pages/general/UserProfile";
 import CreateFood from "../pages/food-partner/addItem";
 import FoodPartnerDashboard from "../pages/food-partner/FoodPartnerDashboard";
+import PartnerProtectedRoute from "../middleware/PartnerProtectedRoute";
+import UserProtectedRoute from "../middleware/UserProtectedRoute";
+import AuthRedirectRoute from "../middleware/AuthRedirectRoute";
+
 
 const AppRoutes = () => {
-    return (
-        <Router>
-            <Routes>
-                {/* User Auth Routes */}
-                <Route path="/user/register" element={<UserRegister />} />
-                <Route path="/user/login" element={<UserLogin />} />
-                
-                {/* Food Partner Auth Routes */}
-                <Route path="/food-partner/register" element={<FoodPartnerRegister />} />
-                <Route path="/food-partner/login" element={<FoodPartnerLogin />} />
-                
-                {/* User Pages */}
-                <Route path="/" element={<HomePage />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/orders" element={<Orders />} />
-                <Route path="/user" element={<UserProfile />} />
-                
-                {/* Food Partner Pages */}
-                <Route path="/food-partner/dashboard" element={<FoodPartnerDashboard />} />
-                <Route path="/add-item" element={<CreateFood />} />
-            </Routes>
-        </Router>
-    );
+  return (
+    <Router>
+      <Routes>
+        {/* User Auth Routes */}
+        <Route path="/user/register" element={
+          <AuthRedirectRoute>
+            <UserRegister />
+          </AuthRedirectRoute>
+        } />
+        
+        <Route path="/user/login" element={
+          <AuthRedirectRoute>
+            <UserLogin />
+          </AuthRedirectRoute>
+        } />
+
+        {/* Food Partner Auth Routes */}
+        <Route path="/food-partner/register" element={
+          <AuthRedirectRoute>
+            <FoodPartnerRegister />
+          </AuthRedirectRoute>
+        } />
+
+        <Route path="/food-partner/login" element={
+          <AuthRedirectRoute>
+            <FoodPartnerLogin />
+          </AuthRedirectRoute>
+        } />
+
+        {/* User Pages */}
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/cart"
+          element={
+            <PartnerProtectedRoute>
+              <Cart />
+            </PartnerProtectedRoute>
+          }
+        />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/user" element={
+          <UserProtectedRoute>
+            <UserProfile />
+          </UserProtectedRoute>
+
+        } />
+
+        {/* Food Partner Pages */}
+        <Route
+          path="/food-partner/dashboard"
+          element={
+            <PartnerProtectedRoute>
+              <FoodPartnerDashboard />
+            </PartnerProtectedRoute>
+          }
+        />
+        <Route
+          path="/food-partner/add-item"
+          element={
+            <PartnerProtectedRoute>
+              <CreateFood />
+            </PartnerProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
+  );
 };
 
 export default AppRoutes;
