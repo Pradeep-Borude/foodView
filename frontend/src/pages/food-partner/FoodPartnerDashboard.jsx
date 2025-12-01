@@ -176,7 +176,7 @@ export default function FoodPartnerDashboard() {
             <p>No products yet. Start by adding your first product!</p>
             <button 
               className="btn-primary"
-              onClick={() => navigate('/add-item')}
+              onClick={() => navigate('/food-partner/add-item')}
             >
               Add Your First Product
             </button>

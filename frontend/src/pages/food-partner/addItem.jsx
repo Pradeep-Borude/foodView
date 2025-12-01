@@ -12,11 +12,13 @@ export default function AddItem() {
         const name = event.target.name.value;
         const description = event.target.description.value;
         const image = event.target.image.files[0];
+        const price = event.target.price.value;
 
         const formData = new FormData();
         formData.append('name', name);
         formData.append('description', description);
         formData.append('file', image);
+        formData.append('price', price);
 
         const response = await axios.post('http://localhost:3000/api/food', formData, {
           withCredentials: true,
@@ -53,6 +55,15 @@ export default function AddItem() {
               placeholder="Enter food item description"
               rows="5"
             ></textarea>
+          </div>
+
+           <div className="form-group">
+            <label htmlFor="price">Price</label>
+            <input
+              type="number"
+              id="price"
+              placeholder="Enter food item price"
+            />
           </div>
 
           <div className="form-group">
