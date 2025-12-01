@@ -6,17 +6,19 @@ const foodSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    video: {
-        type: String,
-        required: true
-    },
     description: {
         type: String
     },
-
+    image: {
+        type: String
+    },
     foodPartner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "foodPartner"
+    },
+    price: {
+        type: Number,
+        required: true
     }
 });
 
