@@ -1,14 +1,18 @@
 import '../../styles/addItem.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import { useState } from 'react';
 
 
 export default function AddItem() {
 
      const navigate = useNavigate();
+  const [adding, setadding] = useState(false);
+
       const handleSubmit = async (event) => {
         event.preventDefault();
+    setadding(true);
+
         const name = event.target.name.value;
         const description = event.target.description.value;
         const image = event.target.image.files[0];
@@ -19,7 +23,7 @@ export default function AddItem() {
         formData.append('description', description);
         formData.append('file', image);
         formData.append('price', price);
-
+try {
         const response = await axios.post('http://localhost:3000/api/food', formData, {
           withCredentials: true,
           headers: {
@@ -28,8 +32,15 @@ export default function AddItem() {
         });
         console.log('data sent successfully:', response.data);
         navigate('/food-partner/dashboard');
-      };
-
+      }
+    catch (error) {
+      console.error("Add item failed:", error);
+      alert("Failed to add item. Please try again.");
+    } finally {
+      setadding(false);
+    }
+  
+  }
 
 
 
@@ -45,6 +56,7 @@ export default function AddItem() {
               type="text"
               id="name"
               placeholder="Enter food item name"
+              disabled={adding}
             />
           </div>
 
@@ -54,6 +66,7 @@ export default function AddItem() {
               id="description"
               placeholder="Enter food item description"
               rows="5"
+              disabled={adding}
             ></textarea>
           </div>
 
@@ -63,6 +76,8 @@ export default function AddItem() {
               type="number"
               id="price"
               placeholder="Enter food item price"
+              disabled={adding}
+
             />
           </div>
 
@@ -74,6 +89,8 @@ export default function AddItem() {
                 id="image"
                 accept="image/*"
                 className="file-input"
+              disabled={adding}
+
               />
               <div className="upload-placeholder">
                 <span className="upload-icon">📸</span>
@@ -84,8 +101,10 @@ export default function AddItem() {
           </div>
 
           <div className="form-actions">
-            <button type="submit" className="btn-submit">Add Item</button>
-            <button type="reset" className="btn-cancel">Clear</button>
+            <button type="submit" className="btn-submit" disabled={adding}>
+              {adding ? 'Adding...' : 'Add Item'}
+              </button>
+            <button type="reset" className="btn-cancel" disabled={adding}>Clear</button>
           </div>
         </form>
       </div>

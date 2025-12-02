@@ -4,10 +4,9 @@ import axios from 'axios';
 import '../../styles/foodPartnerDashboard.css';
 import BottomNav from '../../components/BottomNav';
 
-
 export default function FoodPartnerDashboard() {
   const [foodPartner, setFoodPartner] = useState(null);
-  const [foodItems, setfoodItems] = useState([]);
+  const [foodItems, setFoodItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -30,7 +29,6 @@ export default function FoodPartnerDashboard() {
       setFoodPartner(partner);
       setError(null);
 
-      // fetch food items according to partner when partner get authenticated
       await fetchFoodItems(partner._id);
     } catch (err) {
       console.error('Error fetching food partner data:', err);
@@ -46,15 +44,14 @@ export default function FoodPartnerDashboard() {
     }
   };
 
-  // function for fetching food items added by food partner
   const fetchFoodItems = async (partnerId) => {
     try {
       const response = await axios.get(
         `http://localhost:3000/api/food/${partnerId}`,
         { withCredentials: true }
       );
-   
-      setfoodItems(response.data.foodItems || []);
+
+      setFoodItems(response.data.foodItems || []);
       setError(null);
     } catch (err) {
       console.error('Error fetching food items:', err);
@@ -86,7 +83,7 @@ export default function FoodPartnerDashboard() {
       await axios.delete(`http://localhost:3000/api/food/${itemId}`, {
         withCredentials: true,
       });
-      setfoodItems((prev) => prev.filter((p) => p._id !== itemId));
+      setFoodItems((prev) => prev.filter((p) => p._id !== itemId));
     } catch (err) {
       console.error('Error deleting product:', err);
       alert('Failed to delete product');
@@ -103,7 +100,6 @@ export default function FoodPartnerDashboard() {
 
   return (
     <div className="dashboard-container">
-      {/* Header */}
       <header className="dashboard-header">
         <h1>Food Partner Dashboard</h1>
         <button className="logout-btn" onClick={handleLogout}>
@@ -156,27 +152,7 @@ export default function FoodPartnerDashboard() {
         </section>
       )}
 
-      {/* Business Stats Section */}
-      <section className="stats-section">
-        <div className="stat-card">
-          <div className="stat-value">{foodItems.length}</div>
-          <div className="stat-label">Active Products</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-value">₹0</div>
-          <div className="stat-label">Total Revenue</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-value">0</div>
-          <div className="stat-label">Total Orders</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-value">4.5★</div>
-          <div className="stat-label">Rating</div>
-        </div>
-      </section>
-
-      {/* Products Management Section */}
+      {/* Products Section */}
       <section className="products-section">
         <div className="products-header">
           <h3>Your Products</h3>
@@ -217,7 +193,14 @@ export default function FoodPartnerDashboard() {
                   </div>
                 </div>
                 <div className="product-actions">
-                  <button className="btn-small btn-secondary">Edit</button>
+                  <button
+                    className="btn-small btn-secondary"
+                    onClick={() =>
+                      navigate(`/food-partner/edit-item/${product._id}`)
+                    }
+                  >
+                    Edit
+                  </button>
                   <button
                     className="btn-small btn-danger"
                     onClick={() => handleDeleteFoodItem(product._id)}
@@ -229,37 +212,6 @@ export default function FoodPartnerDashboard() {
             ))}
           </div>
         )}
-      </section>
-
-      {/* Quick Actions */}
-      <section className="quick-actions">
-        <h3>Quick Actions</h3>
-        <div className="actions-grid">
-          <div className="action-card">
-            <div className="action-icon">📋</div>
-            <h4>View Orders</h4>
-            <p>Check incoming orders and order status</p>
-            <button className="btn-secondary">Go to Orders</button>
-          </div>
-          <div className="action-card">
-            <div className="action-icon">📊</div>
-            <h4>View Reports</h4>
-            <p>Check your sales and performance reports</p>
-            <button className="btn-secondary">View Reports</button>
-          </div>
-          <div className="action-card">
-            <div className="action-icon">⚙️</div>
-            <h4>Settings</h4>
-            <p>Update business details and preferences</p>
-            <button className="btn-secondary">Open Settings</button>
-          </div>
-          <div className="action-card">
-            <div className="action-icon">💬</div>
-            <h4>Support</h4>
-            <p>Contact our support team for help</p>
-            <button className="btn-secondary">Contact Support</button>
-          </div>
-        </div>
       </section>
 
       <BottomNav />
