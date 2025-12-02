@@ -2,80 +2,91 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/foodPartnerDashboard.css';
+import BottomNav from '../../components/BottomNav';
+
 
 export default function FoodPartnerDashboard() {
   const [foodPartner, setFoodPartner] = useState(null);
-  const [products, setProducts] = useState([]);
+  const [foodItems, setfoodItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showAddProduct, setShowAddProduct] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchFoodPartnerData();
-    fetchProducts();
+    const init = async () => {
+      await fetchFoodPartnerData();
+    };
+    init();
   }, []);
 
   const fetchFoodPartnerData = async () => {
     try {
-      const response = await axios.get('/api/auth/food-partner/profile', {
-        withCredentials: true,
-      });
-      setFoodPartner(response.data);
+      const response = await axios.get(
+        'http://localhost:3000/api/auth/food-partner/me',
+        { withCredentials: true }
+      );
+
+      const partner = response.data.partner;
+      setFoodPartner(partner);
       setError(null);
+
+      // fetch food items according to partner when partner get authenticated
+      await fetchFoodItems(partner._id);
     } catch (err) {
       console.error('Error fetching food partner data:', err);
-      // For now, use mock data if API fails
-      setFoodPartner({
-        name: 'Loading...',
-        email: 'restaurant@example.com',
-        contact: '0000000000',
-        address: 'Your Restaurant Address',
-        profilePhoto: null,
-        createdAt: new Date().toISOString(),
-      });
-      // setError('Failed to load profile data');
-      // Redirect to login if unauthorized
+
       if (err.response?.status === 401) {
         navigate('/food-partner/login');
+        return;
       }
+
+      setError('Failed to load partner profile');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchProducts = async () => {
+  // function for fetching food items added by food partner
+  const fetchFoodItems = async (partnerId) => {
     try {
-      const response = await axios.get('/api/food/my-products', {
-        withCredentials: true,
-      });
-      setProducts(Array.isArray(response.data) ? response.data : []);
+      const response = await axios.get(
+        `http://localhost:3000/api/food/${partnerId}`,
+        { withCredentials: true }
+      );
+   
+      setfoodItems(response.data.foodItems || []);
+      setError(null);
     } catch (err) {
-      console.error('Error fetching products:', err);
-      setProducts([]);
+      console.error('Error fetching food items:', err);
+
+      if (err.response?.status === 401) {
+        navigate('/food-partner/login');
+        return;
+      }
+
+      setError('Failed to load food items');
     }
   };
 
   const handleLogout = async () => {
     try {
-      await axios.get('/api/auth/food-partner/logout', {
+      await axios.get('http://localhost:3000/api/auth/food-partner/logout', {
         withCredentials: true,
       });
       navigate('/');
     } catch (err) {
-      console.error('Logout error:', err);
       alert('Logout failed');
     }
   };
 
-  const handleDeleteProduct = async (productId) => {
+  const handleDeleteFoodItem = async (itemId) => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
 
     try {
-      await axios.delete(`/api/food/${productId}`, {
+      await axios.delete(`http://localhost:3000/api/food/${itemId}`, {
         withCredentials: true,
       });
-      setProducts(products.filter(p => p._id !== productId));
+      setfoodItems((prev) => prev.filter((p) => p._id !== itemId));
     } catch (err) {
       console.error('Error deleting product:', err);
       alert('Failed to delete product');
@@ -83,7 +94,11 @@ export default function FoodPartnerDashboard() {
   };
 
   if (loading) {
-    return <div className="dashboard-container"><div className="loading">Loading...</div></div>;
+    return (
+      <div className="dashboard-container">
+        <div className="loading">Loading...</div>
+      </div>
+    );
   }
 
   return (
@@ -91,7 +106,9 @@ export default function FoodPartnerDashboard() {
       {/* Header */}
       <header className="dashboard-header">
         <h1>Food Partner Dashboard</h1>
-        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        <button className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
       </header>
 
       {error && <div className="error-banner">{error}</div>}
@@ -102,7 +119,13 @@ export default function FoodPartnerDashboard() {
           <div className="profile-card">
             <div className="profile-header">
               <div className="profile-avatar">
-                <img src={foodPartner.profilePhoto || 'https://via.placeholder.com/120'} alt={foodPartner.name} />
+                <img
+                  src={
+                    foodPartner.profilePhoto ||
+                    'https://i.pinimg.com/1200x/e8/f2/43/e8f2438038abc1934e910d7cb67650ad.jpg'
+                  }
+                  alt={foodPartner.name}
+                />
               </div>
               <div className="profile-info">
                 <h2>{foodPartner.name}</h2>
@@ -123,12 +146,6 @@ export default function FoodPartnerDashboard() {
                 <span className="detail-label">Address:</span>
                 <span className="detail-value">{foodPartner.address}</span>
               </div>
-              <div className="detail-row">
-                <span className="detail-label">Member Since:</span>
-                <span className="detail-value">
-                  {new Date(foodPartner.createdAt).toLocaleDateString()}
-                </span>
-              </div>
             </div>
 
             <div className="profile-actions">
@@ -142,7 +159,7 @@ export default function FoodPartnerDashboard() {
       {/* Business Stats Section */}
       <section className="stats-section">
         <div className="stat-card">
-          <div className="stat-value">{products.length}</div>
+          <div className="stat-value">{foodItems.length}</div>
           <div className="stat-label">Active Products</div>
         </div>
         <div className="stat-card">
@@ -163,18 +180,18 @@ export default function FoodPartnerDashboard() {
       <section className="products-section">
         <div className="products-header">
           <h3>Your Products</h3>
-          <button 
+          <button
             className="btn-primary"
-            onClick={() => navigate('/add-item')}
+            onClick={() => navigate('/food-partner/add-item')}
           >
             + Add New Product
           </button>
         </div>
 
-        {products.length === 0 ? (
+        {foodItems.length === 0 ? (
           <div className="no-products">
             <p>No products yet. Start by adding your first product!</p>
-            <button 
+            <button
               className="btn-primary"
               onClick={() => navigate('/food-partner/add-item')}
             >
@@ -183,29 +200,27 @@ export default function FoodPartnerDashboard() {
           </div>
         ) : (
           <div className="products-grid">
-            {products.map((product) => (
+            {foodItems.map((product) => (
               <div key={product._id} className="product-card">
                 <div className="product-image">
-                  <img src={product.image || 'https://via.placeholder.com/200'} alt={product.name} />
-                  {product.available ? (
-                    <span className="status-badge available">Available</span>
-                  ) : (
-                    <span className="status-badge unavailable">Unavailable</span>
-                  )}
+                  <img
+                    src={product.image || 'https://via.placeholder.com/200'}
+                    alt={product.name}
+                  />
+                  <span className="status-badge available">Available</span>
                 </div>
                 <div className="product-details">
                   <h4>{product.name}</h4>
                   <p className="product-desc">{product.description}</p>
                   <div className="product-meta">
                     <span className="price">₹{product.price}</span>
-                    <span className="category">{product.category}</span>
                   </div>
                 </div>
                 <div className="product-actions">
                   <button className="btn-small btn-secondary">Edit</button>
-                  <button 
+                  <button
                     className="btn-small btn-danger"
-                    onClick={() => handleDeleteProduct(product._id)}
+                    onClick={() => handleDeleteFoodItem(product._id)}
                   >
                     Delete
                   </button>
@@ -246,6 +261,8 @@ export default function FoodPartnerDashboard() {
           </div>
         </div>
       </section>
+
+      <BottomNav />
     </div>
   );
 }
