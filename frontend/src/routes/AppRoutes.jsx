@@ -13,6 +13,7 @@ import FoodPartnerDashboard from "../pages/food-partner/FoodPartnerDashboard";
 import PartnerProtectedRoute from "../middleware/PartnerProtectedRoute";
 import UserProtectedRoute from "../middleware/UserProtectedRoute";
 import AuthRedirectRoute from "../middleware/AuthRedirectRoute";
+import EditFood from "../pages/food-partner/editItem";
 
 
 const AppRoutes = () => {
@@ -50,9 +51,9 @@ const AppRoutes = () => {
         <Route
           path="/cart"
           element={
-            <PartnerProtectedRoute>
+            <UserProtectedRoute>
               <Cart />
-            </PartnerProtectedRoute>
+            </UserProtectedRoute>
           }
         />
         <Route path="/orders" element={<Orders />} />
@@ -77,6 +78,14 @@ const AppRoutes = () => {
           element={
             <PartnerProtectedRoute>
               <CreateFood />
+            </PartnerProtectedRoute>
+          }
+        />
+         <Route
+          path="/food-partner/edit-item/:foodId"
+          element={
+            <PartnerProtectedRoute>
+              <EditFood />
             </PartnerProtectedRoute>
           }
         />
