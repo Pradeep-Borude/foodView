@@ -29,7 +29,9 @@ async function registerUser(req, res) {
     process.env.JWT_SECRET
   );
 
-  res.cookie("userToken", token);
+  res.cookie("userToken", token,{
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
 
   res.status(201).json({
     message: "user registered successfully",
@@ -67,7 +69,9 @@ async function loginUser(req, res) {
     process.env.JWT_SECRET
   );
 
-  res.cookie("userToken", token);
+  res.cookie("userToken", token,{
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
 
   res.status(200).json({
     message: "user logged in successfully",
@@ -116,7 +120,9 @@ async function registeredFoodPartner(req, res) {
     process.env.JWT_SECRET
   );
 
-  res.cookie("foodPartnerToken", token);
+  res.cookie("foodPartnerToken", token,{
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
 
   res.status(201).json({
     message: "Food partner registered successfully",
@@ -148,7 +154,10 @@ async function loginFoodPartner(req, res) {
     process.env.JWT_SECRET
   );
 
-  res.cookie("foodPartnerToken", token);
+  res.cookie("foodPartnerToken", token,{
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    }
+  );
   res.status(200).json({
     message: "foodpartner Login successful",
     foodPartner: {
