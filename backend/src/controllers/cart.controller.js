@@ -41,7 +41,7 @@ async function getCartItemByUSer(req, res) {
     try {
          const userId = req.user._id;
 
-        const items = await cartModel.find({ user: userId });
+        const items = await cartModel.find({ user: userId }).populate("foodItem");
 
         return res.status(200).json({
             message: 'Food items fetched successfully',
