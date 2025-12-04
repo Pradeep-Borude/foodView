@@ -1,38 +1,76 @@
 const express = require('express');
 const foodController = require("../controllers/food.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
+const cartController = require("../controllers/cart.controller");
 const router = express.Router();
 const multer = require('multer');
 
-
 const upload = multer({
-    storage:multer.memoryStorage(),
- 
-})
+    storage: multer.memoryStorage(),
+});
 
+/* ----------------------------------------
+   FOOD PARTNER PROTECTED ROUTES
+-----------------------------------------*/
 
-// POST /api/food/ *[protected]
-router.post('/',authMiddleware.authFoodPartnerMiddleware,
-    upload.single("file"),
-    foodController.createFood)
-// GET /api/food/:foodId *[protected]
-router.delete('/:foodId',authMiddleware.authFoodPartnerMiddleware,
-    foodController.deleteFood)
-// PUT /api/food/:foodId *[protected]
+// CREATE FOOD  (POST /api/food/)
+router.post(
+  '/',
+  authMiddleware.authFoodPartnerMiddleware,
+  upload.single("file"),
+  foodController.createFood
+);
+
+// UPDATE FOOD  (PUT /api/food/:foodId)
 router.put(
   '/:foodId',
- authMiddleware.authFoodPartnerMiddleware,
+  authMiddleware.authFoodPartnerMiddleware,
   upload.single('file'),
   foodController.updateFood
 );
 
-// GET /api/food/ *[public]
-router.get('/',
-    foodController.getFoodItems)
+// DELETE FOOD  (DELETE /api/food/:foodId)
+router.delete(
+  '/:foodId',
+  authMiddleware.authFoodPartnerMiddleware,
+  foodController.deleteFood
+);
 
-   // GET /api/food/:partnerId *[protected] 
-router.get('/:partnerId',
-    authMiddleware.authFoodPartnerMiddleware,
-    foodController.getItemByPartner)
+// GET FOOD ITEMS BY PARTNER  (GET /api/food/:partnerId)
+router.get(
+  '/:partnerId',
+  authMiddleware.authFoodPartnerMiddleware,
+  foodController.getItemByPartner
+);
 
-module.exports= router;
+
+/* ----------------------------------------
+   USER CART ROUTE (Protected for User)
+-----------------------------------------*/
+
+// ADD TO CART  (POST /api/food/add-to-cart/:foodId)
+router.post(
+  '/add-to-cart/:foodId',
+  authMiddleware.authUserMiddleware,
+  cartController.addToCart
+);
+
+
+
+//get user's cart items
+router.get(
+  '/cart/:userId',
+  authMiddleware.authUserMiddleware,
+  cartController.getCartItemByUSer
+);
+
+/* ----------------------------------------
+   PUBLIC FOOD ROUTE
+-----------------------------------------*/
+
+// GET ALL FOOD ITEMS (GET /api/food/)
+router.get('/', foodController.getFoodItems);
+
+
+
+module.exports = router;
