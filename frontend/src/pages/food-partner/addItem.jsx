@@ -30,6 +30,7 @@ try {
             'Content-Type': 'multipart/form-data'
           }
         });
+        alert(response.data.message)
         navigate('/food-partner/dashboard');
       }
     catch (error) {

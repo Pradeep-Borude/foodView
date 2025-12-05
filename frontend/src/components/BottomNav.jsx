@@ -16,7 +16,6 @@ export default function BottomNav() {
       <div className={`navbar-item ${pathname === '/cart' ? 'active' : ''}`} onClick={() => navigate('/cart')}>
         <div className="navbar-icon">🛒</div>
         <div className="navbar-label">Cart</div>
-        <div className="cart-badge">0</div>
       </div>
 
       <div className={`navbar-item ${pathname === '/orders' ? 'active' : ''}`} onClick={() => navigate('/orders')}>

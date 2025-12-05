@@ -8,19 +8,28 @@ import { useNavigate } from 'react-router-dom';
 export default function FoodPartnerLogin() {
 
   const navigate = useNavigate();
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const email = event.target.email.value;
-    const password = event.target.password.value;
-    const response = await axios.post('http://localhost:3000/api/auth/food-partner/login', {
-      email,
-      password,
-    }, {
-      withCredentials: true
-    });
-    console.log('Login successful:', response.data);
+ const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  const email = event.target.email.value;
+  const password = event.target.password.value;
+
+  try {
+    const response = await axios.post(
+      'http://localhost:3000/api/auth/food-partner/login',
+      { email, password },
+      { withCredentials: true }
+    );
+
+    alert(response.data.message);
     navigate('/food-partner/dashboard');
-  };
+
+  } catch (err) {
+
+    const msg = err.response?.data?.message || "Something went wrong";
+    alert(msg);
+  }
+};
 
 
   return (

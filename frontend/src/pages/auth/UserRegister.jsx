@@ -13,17 +13,21 @@ export default function UserRegister() {
     const email = event.target.email.value;
     const password = event.target.password.value;
 
-    const response = await axios.post('http://localhost:3000/api/auth/user/register', {
-      fullName,
-      email,
-      password,
-    }, {
-      withCredentials: true
-    });
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/auth/user/register',
+        { fullName, email, password },
+        { withCredentials: true }
+      );
 
-    navigate('/');
+      alert(response.data.message); 
+      navigate('/');
+
+    } catch (error) {
+      const msg = error.response?.data?.message || "Registration failed";
+      alert(msg);  
+    }
   };
-
   return (
     <div className="auth-container">
       <div className="auth-wrapper">

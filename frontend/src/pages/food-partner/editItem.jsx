@@ -32,7 +32,7 @@ export default function EditItem() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("Food item updated:", response.data);
+      alert( response.data.message);
       navigate("/food-partner/dashboard");
     } catch (error) {
       console.error("Update failed:", error);

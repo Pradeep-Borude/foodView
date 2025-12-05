@@ -7,35 +7,21 @@ export default function FoodPartnerRegister() {
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const name = event.target.businessName.value?.trim();
-      const email = event.target.email.value?.trim();
-      const address = event.target.address.value?.trim();
-      const contact = Number(event.target.contactPhone.value?.trim());
-      const password = event.target.password.value?.trim();
-      
-      if (!name || !email || !address || !contact || !password) {
-        alert('All fields are required');
-        return;
-      }
-      
-      console.log('Sending data:', { name, email, contact, password, address });
-      
-      const response = await axios.post('http://localhost:3000/api/auth/food-partner/register', {
-        name,
-        email,
-        contact,
-        password,
-        address,
-      }, {
-        withCredentials: true
-      });
-      console.log('Registration successful:', response.data);
-      navigate('/food-partner/dashboard');
-    } catch (error) {
-      console.error('Registration error:', error.response?.data || error.message);
-      alert(error.response?.data?.message || 'Registration failed');
-    }
+   try {
+  const response = await axios.post(
+    'http://localhost:3000/api/auth/food-partner/register',
+    { name, email, contact, password, address },
+    { withCredentials: true }
+  );
+
+  alert(response.data.message);
+  navigate('/food-partner/dashboard');
+
+} catch (error) {
+  const msg = error.response?.data?.message || "Registration failed";
+  alert(msg);   
+}
+
   };
 
 

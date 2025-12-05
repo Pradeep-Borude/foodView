@@ -10,21 +10,28 @@ export default function UserLogin() {
 const navigate = useNavigate();
 
   
-    const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (event) => {
+  event.preventDefault();
 
-    const email = event.target.email.value;
-    const password = event.target.password.value;
+  const email = event.target.email.value;
+  const password = event.target.password.value;
 
-    const response = await axios.post('http://localhost:3000/api/auth/user/login', {
-      email,
-      password,
-    }, {
-      withCredentials: true
-    });
-    console.log('Login successful:', response.data);
+  try {
+    const response = await axios.post(
+      'http://localhost:3000/api/auth/user/login',
+      { email, password },
+      { withCredentials: true }
+    );
+
+    alert(response.data.message);
     navigate('/user');
-  };
+
+  } catch (err) {
+    const msg = err.response?.data?.message || "Something went wrong";
+    alert(msg); 
+  }
+};
+
   return (
     <div className="auth-container">
       <div className="auth-wrapper">

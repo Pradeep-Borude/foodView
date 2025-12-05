@@ -26,7 +26,6 @@ export default function Cart() {
       );
 
       const u = response.data.user._id;
-      console.log("user id :", u)
       setUser(u);
       setError(null);
 
@@ -60,16 +59,16 @@ export default function Cart() {
     if (!window.confirm('Are you sure you want to remove this product from cart ?')) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/food/remove-from-cart/${itemId}`, {
+    const  response = await axios.delete(`http://localhost:3000/api/food/remove-from-cart/${itemId}`, {
         withCredentials: true,
       });
       setCartItems(prev =>
         prev.filter(item => item.foodItem._id !== itemId)
       );
+      alert(response.data.message)
     } catch (err) {
       alert('Failed to delete product');
     }
-    console.log("product id : ", itemId)
 
   }
 
