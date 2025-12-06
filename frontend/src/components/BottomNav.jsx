@@ -6,6 +6,23 @@ export default function BottomNav() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
 
+  function handleAccountClick() {
+    const hasUser = document.cookie.includes("userToken=");
+    const hasPartner = document.cookie.includes("foodPartnerToken=");
+
+    if (hasPartner) {
+      navigate("/food-partner/dashboard");
+      return;
+    }
+
+    if (hasUser) {
+      navigate("/user");
+      return;
+    }
+
+    navigate("/user/login");
+  }
+
   return (
     <nav className="navbar-bottom">
       <div className={`navbar-item ${pathname === '/' ? 'active' : ''}`} onClick={() => navigate('/')}>
@@ -23,7 +40,7 @@ export default function BottomNav() {
         <div className="navbar-label">Orders</div>
       </div>
 
-      <div className={`navbar-item ${pathname === '/user' ? 'active' : ''}`} onClick={() => navigate('/user')}>
+      <div className={`navbar-item ${pathname === '/user' ? 'active' : ''}`} onClick={handleAccountClick}>
         <div className="navbar-icon">👤</div>
         <div className="navbar-label">Account</div>
       </div>

@@ -16,20 +16,6 @@ export default function UserProfile() {
 
   const checkAuthAndLoad = async () => {
     try {
-      // Check partner first
-      const partnerRes = await axios.get(
-        'http://localhost:3000/api/auth/food-partner/me',
-        { 
-          withCredentials: true,
-          validateStatus: () => true  
-        }
-      );
-
-      if (partnerRes.data?.success) {
-        navigate('/food-partner/dashboard');
-        return;
-      }
-
       // Check user
       const userRes = await axios.get(
         'http://localhost:3000/api/auth/user/me',
@@ -112,7 +98,6 @@ export default function UserProfile() {
         </section>
       )}
 
-      {/* Quick actions section */}
       <section className="stats-section">
         <div className="stat-card">
           <div className="stat-value">Support</div>

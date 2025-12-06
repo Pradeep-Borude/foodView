@@ -10,7 +10,8 @@ export default function Home() {
 
 
 const addToCart = async (itemId) => {
-
+    const hasUser = document.cookie.includes("userToken=");
+if(hasUser){
   try {
     const response=await axios.post(
       `http://localhost:3000/api/food/add-to-cart/${itemId}`,
@@ -18,10 +19,13 @@ const addToCart = async (itemId) => {
       { withCredentials: true }
     );
     alert(response.data.message)
-    // alert(response);
   } catch (err) {
     alert("Failed to add product");
+  } }else{
+    alert("please login first")
+    navigate('/user/login')
   }
+
 };
 
 
@@ -33,7 +37,6 @@ const addToCart = async (itemId) => {
         "http://localhost:3000/api/food",
         { withCredentials: true }
       );
-      // Update state with fetched items (triggers re-render)
       setFoodItems(response.data.foodItems);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -51,19 +54,16 @@ const addToCart = async (itemId) => {
 
   return (
     <div className="home-container">
-      {/* Hero Section */}
       <div className="hero-section">
         <h1 className="hero-title">Welcome to FoodView</h1>
         <p className="hero-subtitle">Discover delicious food from the best restaurants</p>
       </div>
 
-      {/* Products Section */}
       <div className="products-section">
         <div className="products-header">
           <h2 className="products-title">Popular Dishes</h2>
         </div>
 
-        {/* Products Grid */}
         <div className="products-grid">
           {foodItems.map((product) => (
             <div key={product._id} className="product-card">
@@ -87,8 +87,6 @@ const addToCart = async (itemId) => {
           ))}
         </div>
       </div>
-
-      {/* Sticky Bottom Navbar */}
           <BottomNav/>
     
     </div>

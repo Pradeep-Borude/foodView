@@ -8,37 +8,51 @@ export default function Cart() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const hasUser = document.cookie.includes("userToken=");
     const init = async () => {
-      await fetchUserData();
+if(hasUser){
+  await fetchUserData();
+
+}
     };
     init();
   }, []);
 
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get(
-        'http://localhost:3000/api/auth/user/me',
-        { withCredentials: true }
-      );
+const fetchUserData = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:3000/api/auth/user/me",
+      { withCredentials: true }
+    );
 
-      const u = response.data.user._id;
-      setUser(u);
-      setError(null);
+    const u = response.data.user._id;
+    setUser(u);
+    setError(null);
 
-      await fetchCartItems(u);
-    } catch (err) {
-      if (err.response?.status === 401) {
+    await fetchCartItems(u);
+  } catch (err) {
+
+    if (err.response) {
+      const status = err.response.status;
+      const message = err.response.data?.message;
+
+      if (status === 401) {
+        console.log(message);
         return;
       }
-      setError('Failed to load user profile');
-    } finally {
-      setLoading(false);
+
+      setError(message || "Something went wrong");
+    } else {
+      console.log("Network error:", err);
+      setError("Network Error");
     }
-  };
+
+  } finally {
+  }
+};
 
   const fetchCartItems = async (userId) => {
     try {
@@ -69,26 +83,8 @@ export default function Cart() {
     } catch (err) {
       alert('Failed to delete product');
     }
-
   }
 
-
-
-  if (loading) {
-    return (
-      <div className="home-container">
-        <div className="hero-section">
-          <h1 className="hero-title">🛒 Your Cart</h1>
-        </div>
-        <div className="products-section">
-          <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-            <p>Loading cart...</p>
-          </div>
-        </div>
-        <BottomNav />
-      </div>
-    );
-  }
 
   return (
     <div className="home-container">

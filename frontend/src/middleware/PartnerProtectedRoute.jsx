@@ -1,11 +1,10 @@
 
-// src/middleware/PartnerProtectedRoute.jsx
 import { Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function PartnerProtectedRoute({ children }) {
-  const [status, setStatus] = useState("loading"); // 'loading' | 'ok' | 'unauthorized'
+  const [status, setStatus] = useState("loading"); 
 
   useEffect(() => {
     const checkAuth = async () => {

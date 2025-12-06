@@ -11,7 +11,6 @@ import UserProfile from "../pages/general/UserProfile";
 import CreateFood from "../pages/food-partner/addItem";
 import FoodPartnerDashboard from "../pages/food-partner/FoodPartnerDashboard";
 import PartnerProtectedRoute from "../middleware/PartnerProtectedRoute";
-import UserProtectedRoute from "../middleware/UserProtectedRoute";
 import AuthRedirectRoute from "../middleware/AuthRedirectRoute";
 import EditFood from "../pages/food-partner/editItem";
 
@@ -26,11 +25,12 @@ const AppRoutes = () => {
             <UserRegister />
           </AuthRedirectRoute>
         } />
-        
+
         <Route path="/user/login" element={
           <AuthRedirectRoute>
             <UserLogin />
           </AuthRedirectRoute>
+
         } />
 
         {/* Food Partner Auth Routes */}
@@ -38,41 +38,30 @@ const AppRoutes = () => {
           <AuthRedirectRoute>
             <FoodPartnerRegister />
           </AuthRedirectRoute>
+
         } />
 
         <Route path="/food-partner/login" element={
           <AuthRedirectRoute>
             <FoodPartnerLogin />
           </AuthRedirectRoute>
+
         } />
 
         {/* User Pages */}
         <Route path="/" element={<HomePage />} />
-        <Route
-          path="/cart"
-          element={
-            <UserProtectedRoute>
-              <Cart />
-            </UserProtectedRoute>
-          }
-        />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/user" element={
-          <UserProtectedRoute>
-            <UserProfile />
-          </UserProtectedRoute>
 
-        } />
+        <Route path="/cart" element={<Cart /> }/>
+
+        <Route path="/orders" element={<Orders />} />
+
+        <Route path="/user" element={<UserProfile />} />
 
         {/* Food Partner Pages */}
         <Route
           path="/food-partner/dashboard"
-          element={
-            <PartnerProtectedRoute>
-              <FoodPartnerDashboard />
-            </PartnerProtectedRoute>
-          }
-        />
+          element={<FoodPartnerDashboard /> } />
+
         <Route
           path="/food-partner/add-item"
           element={
@@ -81,7 +70,7 @@ const AppRoutes = () => {
             </PartnerProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/food-partner/edit-item/:foodId"
           element={
             <PartnerProtectedRoute>
